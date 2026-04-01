@@ -1,1 +1,3 @@
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=11khoa&layout=compact&theme=tokyonight)
+![coding](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWY4bHd5ZGFnbGJtMmRpeW5taTFtZjVrYXYzc2w2ZGozeW9zMDRhNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2IudUHdI075HL02Pkk/giphy.gif)
+<br>
+![typing](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZnhwejMyaDdiY2NpMDQwN3o1N2N2bzl3bDJlZ2hsODJtbHp4aHE4byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ua7vVw9awZKWwLSYpW/giphy.gif)
