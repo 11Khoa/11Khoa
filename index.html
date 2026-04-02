@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen Wake Lock Timer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+    }
+
+    #time {
+      font-size: 4.5rem;
+      font-weight: bold;
+      letter-spacing: 4px;
+      margin: 20px 0;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      flex: 1;
+      min-width: 140px;
+      padding: 16px 24px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #btnOn {
+      background: #4ade80;
+      color: #1f2937;
+    }
+
+    #btnOn:hover {
+      background: #22c55e;
+      transform: translateY(-2px);
+    }
+
+    #btnOff {
+      background: #f87171;
+      color: white;
+    }
+
+    #btnOff:hover {
+      background: #ef4444;
+      transform: translateY(-2px);
+    }
+
+    #btnOff:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #status {
+      font-size: 1.1rem;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .info {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      #time {
+        font-size: 3.8rem;
+      }
+      button {
+        min-width: 120px;
+        padding: 14px 20px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Screen Keep Awake</h1>
+    
+    <div id="time">00:00:00</div>
+    
+    <div class="buttons">
+      <button id="btnOn">TURN ON KEEP AWAKE</button>
+      <button id="btnOff" disabled>TURN OFF</button>
+    </div>
+
+    <div id="status">Status: Ready</div>
+
+    <div class="info">
+      This feature works best on Chrome, Edge, and Safari.<br>
+      Requires HTTPS or localhost.
+    </div>
+  </div>
+
+  <script>
+    let wakeLock = null;
+    let timerInterval = null;
+    let seconds = 0;
+
+    const timeDisplay = document.getElementById('time');
+    const statusDisplay = document.getElementById('status');
+    const btnOn = document.getElementById('btnOn');
+    const btnOff = document.getElementById('btnOff');
+
+    // Format time to HH:MM:SS
+    function formatTime(sec) {
+      const hours = Math.floor(sec / 3600);
+      const minutes = Math.floor((sec % 3600) / 60);
+      const seconds = sec % 60;
+      
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Start timer
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      seconds = 0;
+      timeDisplay.textContent = "00:00:00";
+
+      timerInterval = setInterval(() => {
+        seconds++;
+        timeDisplay.textContent = formatTime(seconds);
+      }, 1000);
+    }
+
+    // Stop timer
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // Request Wake Lock
+    async function requestWakeLock() {
+      try {
+        if (!('wakeLock' in navigator)) {
+          alert("Your browser does not support Wake Lock API!");
+          return;
+        }
+
+        wakeLock = await navigator.wakeLock.request('screen');
+        
+        statusDisplay.textContent = 'Status: Screen is kept awake ✓';
+        statusDisplay.style.background = 'rgba(74, 222, 128, 0.3)';
+        
+        btnOn.disabled = true;
+        btnOff.disabled = false;
+
+        startTimer();
+
+        console.log('Screen Wake Lock activated');
+
+        // Handle auto-release
+        wakeLock.addEventListener('release', () => {
+          statusDisplay.textContent = 'Status: Wake Lock was released automatically';
+          statusDisplay.style.background = 'rgba(251, 191, 36, 0.3)';
+          stopTimer();
+          btnOn.disabled = false;
+          btnOff.disabled = true;
+        });
+
+      } catch (err) {
+        console.error(err);
+        statusDisplay.textContent = 'Error: ' + err.message;
+        statusDisplay.style.background = 'rgba(248, 113, 113, 0.3)';
+      }
+    }
+
+    // Release Wake Lock
+    function releaseWakeLock() {
+      if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+      }
+      
+      stopTimer();
+      statusDisplay.textContent = 'Status: Keep awake turned off';
+      statusDisplay.style.background = 'rgba(255, 255, 255, 0.15)';
+      
+      btnOn.disabled = false;
+      btnOff.disabled = true;
+      
+      // Reset timer
+      seconds = 0;
+      timeDisplay.textContent = "00:00:00";
+    }
+
+    // Event listeners
+    btnOn.addEventListener('click', requestWakeLock);
+    btnOff.addEventListener('click', releaseWakeLock);
+
+    // Optional: Auto re-enable when tab becomes visible
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && wakeLock === null && !btnOn.disabled) {
+        // Uncomment the line below if you want auto reactivation
+        // await requestWakeLock();
+      }
+    });
+  </script>
+</body>
+</html>
