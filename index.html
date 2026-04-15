@@ -12,114 +12,345 @@
     }
 
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+      background-size: 400% 400%;
+      /* animation: gradientShift 15s ease infinite; */
       color: white;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 5px;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 20px;
-      padding: 40px 30px;
+      padding: 18px 16px;
       width: 100%;
-      max-width: 420px;
+      max-width: 380px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3),
+                  0 0 0 1px rgba(255, 255, 255, 0.1),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      /* animation: shimmer 3s infinite; */
+    }
+
+    @keyframes shimmer {
+      0% { background-size: 0 2px; }
+      100% { background-size: 100% 2px; }
     }
 
     h1 {
-      font-size: 2.2rem;
-      margin-bottom: 30px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #ffffff, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.5px;
     }
 
     #time {
-      font-size: 4.5rem;
-      font-weight: bold;
-      letter-spacing: 4px;
-      margin: 20px 0;
-      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin: 6px 0;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+                   0 3px 15px rgba(0, 0, 0, 0.4);
+      font-variant-numeric: tabular-nums;
+      position: relative;
+    }
+
+    #time::before {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgb(0, 255, 55), transparent) no-repeat center center;
+      border-radius: 1px;
+      animation: shimmer 1.5s ease-in-out alternate infinite;
+    }
+
+    #time::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+      border-radius: 1px;
+    }
+
+    .countdown-options {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+    }
+
+    .countdown-options label:first-child {
+      margin-top: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+    }
+
+    .countdown-options .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .countdown-options .radio-option {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 5px 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .countdown-options .radio-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .countdown-options input[type="radio"] {
+      margin-right: 12px;
+      accent-color: #4ade80;
+      transform: scale(1.2);
+    }
+
+    .countdown-options .input-group {
+      pointer-events: none;
+      opacity: .3;
+      transition: .3s;
+    }
+
+    .countdown-options .input-group.show {
+      pointer-events: inherit;
+      opacity: 1;
+    }
+
+    .countdown-options label[for] {
+      display: block;
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+    }
+
+    .countdown-options input[type="time"],
+    .countdown-options input[type="number"] {
+      width: 100%;
+      /* min-height: 45px; */
+      padding: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-self: stretch;
+      box-sizing: border-box;
+    }
+
+    .countdown-options input[type="time"]:focus,
+    .countdown-options input[type="number"]:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+      transform: scale(1.02);
     }
 
     .buttons {
       display: flex;
-      gap: 15px;
-      margin: 30px 0;
+      gap: 10px;
+      margin: 1px 0;
       flex-wrap: wrap;
       justify-content: center;
     }
 
     button {
       flex: 1;
-      min-width: 140px;
-      padding: 16px 24px;
-      font-size: 1.1rem;
-      font-weight: bold;
+      min-width: 120px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 700;
       border: none;
-      border-radius: 12px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
     }
 
     #btnOn {
-      background: #4ade80;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
       color: #1f2937;
+      box-shadow: 0 8px 25px rgba(74, 222, 128, 0.4);
     }
 
     #btnOn:hover {
-      background: #22c55e;
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(74, 222, 128, 0.5);
     }
 
     #btnOff {
-      background: #f87171;
+      background: linear-gradient(135deg, #f87171, #ef4444);
       color: white;
+      box-shadow: 0 8px 25px rgba(248, 113, 113, 0.4);
     }
 
-    #btnOff:hover {
-      background: #ef4444;
-      transform: translateY(-2px);
+    #btnOff:hover:not(:disabled) {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(248, 113, 113, 0.5);
     }
 
     #btnOff:disabled {
-      background: #6b7280;
+      background: linear-gradient(135deg, #6b7280, #4b5563);
       cursor: not-allowed;
       transform: none;
+      box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+      opacity: 0.7;
     }
 
     #status {
-      font-size: 1.1rem;
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 10px;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 8px;
       background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
 
     .info {
-      margin-top: 25px;
-      font-size: 0.9rem;
+      margin-top: 10px;
+      font-size: 0.75rem;
       opacity: 0.8;
+      line-height: 1.3;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     @media (max-width: 480px) {
       .container {
-        padding: 30px 20px;
+        padding: 10px;
+        margin: 10px;
       }
+
+      h1 {
+        font-size: 1rem;
+      }
+
+      #time {
+        font-size: 2rem;
+        letter-spacing: 4px;
+      }
+
+      .countdown-options {
+        padding: 20px;
+        margin: 15px 0;
+      }
+
+      .countdown-options .radio-group {
+        gap: 10px;
+      }
+
+      .countdown-options .radio-option {
+        padding: 10px 14px;
+      }
+
+      button {
+        min-width: 140px;
+        padding: 16px 24px;
+        font-size: 1rem;
+      }
+
+      .buttons {
+        gap: 15px;
+        margin: 10px 0;
+      }
+    }
+
+    @media (max-width: 360px) {
       h1 {
         font-size: 1.9rem;
       }
+
       #time {
-        font-size: 3.8rem;
+        font-size: 3.5rem;
+        letter-spacing: 3px;
       }
-      button {
-        min-width: 120px;
-        padding: 14px 20px;
-        font-size: 1rem;
+
+      .countdown-options {
+        padding: 15px;
       }
     }
   </style>
@@ -130,6 +361,33 @@
     <h1>Screen Keep Awake</h1>
     
     <div id="time">00:00:00</div>
+    
+    <!-- Countdown Options -->
+    <div class="countdown-options">
+      <label>Select timer mode:</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="countdownType" value="none" checked> No countdown (regular timer)
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="countdownType" value="time"> Countdown to time (HH:MM)
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="countdownType" value="duration"> Countdown for duration (minutes)
+        </label>
+      </div>
+      <div style="display: flex;justify-content: space-between;">
+        <div id="timeInput" class="input-group">
+          <label for="targetTime">Target time (HH:MM):</label>
+          <input type="time" id="targetTime" value="11:11">
+        </div>
+        
+        <div id="durationInput" class="input-group">
+          <label for="durationMinutes">Duration in minutes:</label>
+          <input type="number" id="durationMinutes" value="01" min="1" max="1440" pattern="[0-9]*">
+        </div>
+      </div>
+    </div>
     
     <div class="buttons">
       <button id="btnOn">TURN ON KEEP AWAKE</button>
@@ -148,11 +406,19 @@
     let wakeLock = null;
     let timerInterval = null;
     let seconds = 0;
+    let isCountdown = false;
+    let targetTime = null;
+    let countdownSeconds = 0;
 
     const timeDisplay = document.getElementById('time');
     const statusDisplay = document.getElementById('status');
     const btnOn = document.getElementById('btnOn');
     const btnOff = document.getElementById('btnOff');
+    const countdownTypeRadios = document.getElementsByName('countdownType');
+    const timeInput = document.getElementById('timeInput');
+    const durationInput = document.getElementById('durationInput');
+    const targetTimeInput = document.getElementById('targetTime');
+    const durationMinutesInput = document.getElementById('durationMinutes');
 
     // Format time to HH:MM:SS
     function formatTime(sec) {
@@ -163,17 +429,77 @@
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
+    // Handle countdown type change
+    function handleCountdownTypeChange() {
+      const selectedType = document.querySelector('input[name="countdownType"]:checked').value;
+      
+      // Remove show class from all input groups
+      document.querySelectorAll('.input-group').forEach(group => {
+        group.classList.remove('show');
+      });
+      
+      if (selectedType === 'time') {
+        timeInput.classList.add('show');
+      } else if (selectedType === 'duration') {
+        durationInput.classList.add('show');
+      }
+    }
+
+    // Calculate target time in seconds
+    function calculateTargetTime() {
+      const selectedType = document.querySelector('input[name="countdownType"]:checked').value;
+      const now = new Date();
+      
+      if (selectedType === 'time') {
+        const [hours, minutes] = targetTimeInput.value.split(':').map(Number);
+        const targetDate = new Date(now);
+        targetDate.setHours(hours, minutes, 0, 0);
+        
+        // If target time is earlier today, set it for tomorrow
+        if (targetDate <= now) {
+          targetDate.setDate(targetDate.getDate() + 1);
+        }
+        
+        return Math.floor((targetDate - now) / 1000);
+      } else {
+        return durationMinutesInput.value * 60;
+      }
+    }
+
     // Start timer
     function startTimer() {
       if (timerInterval) clearInterval(timerInterval);
       
-      seconds = 0;
-      timeDisplay.textContent = "00:00:00";
-
-      timerInterval = setInterval(() => {
-        seconds++;
+      const selectedType = document.querySelector('input[name="countdownType"]:checked').value;
+      isCountdown = (selectedType === 'time' || selectedType === 'duration');
+      
+      if (isCountdown) {
+        countdownSeconds = calculateTargetTime();
+        seconds = countdownSeconds;
         timeDisplay.textContent = formatTime(seconds);
-      }, 1000);
+        
+        timerInterval = setInterval(() => {
+          countdownSeconds--;
+          seconds = countdownSeconds;
+          timeDisplay.textContent = formatTime(seconds);
+          
+          if (countdownSeconds <= 0) {
+            stopTimer();
+            // Play notification sound or show alert
+            alert('Countdown finished!');
+            // You can add audio notification here
+          }
+        }, 1000);
+      } else {
+        // Regular timer (counting up)
+        seconds = 0;
+        timeDisplay.textContent = "00:00:00";
+
+        timerInterval = setInterval(() => {
+          seconds++;
+          timeDisplay.textContent = formatTime(seconds);
+        }, 1000);
+      }
     }
 
     // Stop timer
@@ -240,8 +566,15 @@
     }
 
     // Event listeners
+    countdownTypeRadios.forEach(radio => {
+      radio.addEventListener('change', handleCountdownTypeChange);
+    });
+    
     btnOn.addEventListener('click', requestWakeLock);
     btnOff.addEventListener('click', releaseWakeLock);
+
+    // Initialize
+    handleCountdownTypeChange();
 
     // Optional: Auto re-enable when tab becomes visible
     document.addEventListener('visibilitychange', async () => {
