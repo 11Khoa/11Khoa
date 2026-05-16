@@ -420,6 +420,22 @@
     const targetTimeInput = document.getElementById('targetTime');
     const durationMinutesInput = document.getElementById('durationMinutes');
 
+    function setStatus(message, background) {
+      statusDisplay.textContent = message;
+      statusDisplay.style.background = background;
+    }
+
+    function setInactiveState(message = 'Status: Keep awake turned off', background = 'rgba(255, 255, 255, 0.15)') {
+      wakeLock = null;
+      stopTimer();
+      btnOn.disabled = false;
+      btnOff.disabled = true;
+      seconds = 0;
+      countdownSeconds = 0;
+      timeDisplay.textContent = "00:00:00";
+      setStatus(message, background);
+    }
+
     // Format time to HH:MM:SS
     function formatTime(sec) {
       const hours = Math.floor(sec / 3600);
@@ -484,10 +500,7 @@
           timeDisplay.textContent = formatTime(seconds);
           
           if (countdownSeconds <= 0) {
-            stopTimer();
-            // Play notification sound or show alert
-            alert('Countdown finished!');
-            // You can add audio notification here
+            releaseWakeLock('Status: Countdown finished', 'rgba(74, 222, 128, 0.3)');
           }
         }, 1000);
       } else {
@@ -514,15 +527,14 @@
     async function requestWakeLock() {
       try {
         if (!('wakeLock' in navigator)) {
-          alert("Your browser does not support Wake Lock API!");
+          setInactiveState('Error: Your browser does not support Wake Lock API!', 'rgba(248, 113, 113, 0.3)');
           return;
         }
 
         wakeLock = await navigator.wakeLock.request('screen');
+        const activeWakeLock = wakeLock;
         
-        statusDisplay.textContent = 'Status: Screen is kept awake ✓';
-        statusDisplay.style.background = 'rgba(74, 222, 128, 0.3)';
-        
+        setStatus('Status: Screen is kept awake', 'rgba(74, 222, 128, 0.3)');
         btnOn.disabled = true;
         btnOff.disabled = false;
 
@@ -531,38 +543,30 @@
         console.log('Screen Wake Lock activated');
 
         // Handle auto-release
-        wakeLock.addEventListener('release', () => {
-          statusDisplay.textContent = 'Status: Wake Lock was released automatically';
-          statusDisplay.style.background = 'rgba(251, 191, 36, 0.3)';
-          stopTimer();
-          btnOn.disabled = false;
-          btnOff.disabled = true;
+        activeWakeLock.addEventListener('release', () => {
+          if (wakeLock === activeWakeLock) {
+            setInactiveState('Status: Wake Lock was released automatically', 'rgba(251, 191, 36, 0.3)');
+          }
         });
 
       } catch (err) {
         console.error(err);
-        statusDisplay.textContent = 'Error: ' + err.message;
-        statusDisplay.style.background = 'rgba(248, 113, 113, 0.3)';
+        setInactiveState('Error: ' + err.message, 'rgba(248, 113, 113, 0.3)');
       }
     }
 
     // Release Wake Lock
-    function releaseWakeLock() {
-      if (wakeLock !== null) {
-        wakeLock.release();
-        wakeLock = null;
+    function releaseWakeLock(message = 'Status: Keep awake turned off', background = 'rgba(255, 255, 255, 0.15)') {
+      const activeWakeLock = wakeLock;
+      wakeLock = null;
+
+      if (activeWakeLock !== null) {
+        activeWakeLock.release().catch(err => {
+          console.error(err);
+        });
       }
-      
-      stopTimer();
-      statusDisplay.textContent = 'Status: Keep awake turned off';
-      statusDisplay.style.background = 'rgba(255, 255, 255, 0.15)';
-      
-      btnOn.disabled = false;
-      btnOff.disabled = true;
-      
-      // Reset timer
-      seconds = 0;
-      timeDisplay.textContent = "00:00:00";
+
+      setInactiveState(message, background);
     }
 
     // Event listeners
@@ -571,7 +575,7 @@
     });
     
     btnOn.addEventListener('click', requestWakeLock);
-    btnOff.addEventListener('click', releaseWakeLock);
+    btnOff.addEventListener('click', () => releaseWakeLock());
 
     // Initialize
     handleCountdownTypeChange();
