@@ -93,8 +93,12 @@
       transform: translateX(-50%);
       width: 50%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgb(0, 255, 55), transparent) no-repeat center center;
+      background: linear-gradient(90deg, transparent, red, transparent) no-repeat center center;
       border-radius: 1px;
+    }
+
+    html:has(#status.active) #time::before{
+      background: linear-gradient(90deg, transparent, rgb(0, 255, 55), transparent) no-repeat center center;
       animation: shimmer 1.5s ease-in-out alternate infinite;
     }
 
@@ -111,7 +115,7 @@
     }
 
     .countdown-options {
-      margin: 10px 0;
+      margin: 20px 0 10px 0;
       padding: 10px;
       background: rgba(255, 255, 255, 0.08);
       border-radius: 10px;
@@ -423,6 +427,7 @@
     function setStatus(message, background) {
       statusDisplay.textContent = message;
       statusDisplay.style.background = background;
+      statusDisplay.classList.add("active")
     }
 
     function setInactiveState(message = 'Status: Keep awake turned off', background = 'rgba(255, 255, 255, 0.15)') {
@@ -434,6 +439,7 @@
       countdownSeconds = 0;
       timeDisplay.textContent = "00:00:00";
       setStatus(message, background);
+      statusDisplay.classList.remove("active")
     }
 
     // Format time to HH:MM:SS
