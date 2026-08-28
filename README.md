@@ -1,25 +1,29 @@
-
 # Hi, I'm Khoa 👋
 
-Frontend Developer with 6+ years of experience building responsive and
-maintainable web applications. Currently expanding into Python backend
-development and AI-powered applications.
+Software engineer with 6+ years of production experience, now focused on
+Python, FastAPI, and Retrieval-Augmented Generation (RAG).
 
 ## Featured Project
 
 ### [AskMeMind](https://github.com/11Khoa/askmemind)
 
-A citation-aware PDF question-answering platform built with Retrieval-Augmented
-Generation (RAG), FastAPI, PostgreSQL, pgvector, NVIDIA embeddings, and Groq.
+A citation-aware PDF question-answering platform built with RAG, FastAPI,
+PostgreSQL, pgvector, NVIDIA embeddings, and Groq.
 
-- PDF processing and page-aware text chunking
-- Vector similarity search with pgvector
-- Citation-aware question answering
-- JWT authentication and user-scoped retrieval
-- Automated testing, migrations, and Docker deployment
+- User-scoped semantic + hybrid (vector + full-text) search with pgvector
+- **100% Hit Rate, 0.71 MRR** on a bilingual (EN/VI) retrieval benchmark — up
+  from 0.64 MRR with vector-only search
+- Citation-aware answer generation with fallback (no hallucinated answers)
+- JWT authentication, 27 automated Pytest cases, Docker deployment
 
 [Live Demo](https://askmemind.streamlit.app)
 
+## Also built
+
+- [checkHTML](https://marketplace.visualstudio.com/items?itemName=Khoa.checkhtml) —
+  VS Code extension that lints and auto-fixes CMS template HTML
+
 ## Tech Stack
 
-JavaScript · TypeScript · Vue.js · Python · FastAPI · PostgreSQL · pgvector · Docker
+**AI / Backend:** Python · FastAPI · PostgreSQL · pgvector · SQLAlchemy · Docker
+**Frontend:** JavaScript · TypeScript · Vue.js
