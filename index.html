@@ -49,6 +49,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       position: relative;
       overflow: hidden;
+      z-index: 3;
     }
 
     .container::before {
@@ -360,6 +361,39 @@
         padding: 15px;
       }
     }
+    .button-noti{
+      position: fixed;
+      z-index: 1;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+      width: 100vw;
+      height: 100dvh;
+    }
+    .button-noti button{
+      min-width: auto;
+      padding: 10px;
+      font-size: 8px;
+      box-sizing: border-box;
+    }
+    #enableNotification{
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+    .badge{
+      position: absolute;
+      left: 5px;
+      right: 5px;
+      bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      button::before{
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -406,6 +440,13 @@
     <div class="info">
       This feature works best on Chrome, Edge, and Safari.<br>
       Requires HTTPS or localhost.
+    </div>
+  </div>
+  <div class="button-noti">
+    <button id="enableNotification">Test Notification</button>
+    <div class="badge" style="display: none;">
+      <button id="setBadge">Set badge</button>
+      <button id="clearBadge">Clear badge</button>
     </div>
   </div>
 
@@ -594,6 +635,58 @@
       if (document.visibilityState === 'visible' && wakeLock === null && !btnOn.disabled) {
         // Uncomment the line below if you want auto reactivation
         // await requestWakeLock();
+      }
+    });
+
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          const registration = await navigator.serviceWorker.register(
+            "/service-worker.js"
+          );
+
+          console.log("Service Worker registered:", registration);
+        } catch (error) {
+          console.error("Service Worker registration failed:", error);
+        }
+      });
+    }
+     document
+    .getElementById("enableNotification")
+    .addEventListener("click", async () => {
+      const permission = await Notification.requestPermission();
+
+      console.log("Permission:", permission);
+      document.querySelector(".badge").style.display = "block";
+
+      if (permission !== "granted") return;
+
+      const registration = await navigator.serviceWorker.ready;
+
+      await registration.showNotification("Awake FullFact", {
+        body: "Test notification",
+        icon: "./apple-touch-icon.png",
+      });
+    });
+    let count = 0;
+    document.getElementById("setBadge").addEventListener("click", async () => {
+      count++;
+      if ("setAppBadge" in navigator) {
+        alert(count);
+        await navigator.setAppBadge(count);
+        console.log("Badge set to "+ count);
+      } else {
+        console.log("Badging API not supported");
+      }
+    });
+
+    document.getElementById("clearBadge").addEventListener("click", async () => {
+      if ("clearAppBadge" in navigator) {
+        await navigator.clearAppBadge();
+        count = 0;
+        console.log("Badge cleared");
       }
     });
   </script>
